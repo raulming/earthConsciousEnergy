@@ -89,6 +89,7 @@ body{font-size:16px;letter-spacing:.012em}.brand{font-size:16px;font-weight:800}
 
 /* 当前节点始终以最新一条记录为准，并显示可见的更新标识。 */
 .milestone-tags{align-self:start;justify-self:end;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px}.milestone-tags .breakthrough-tag{align-self:auto;justify-self:auto}.milestone.current .latest{color:#bffaff;border-color:rgba(84,231,255,.72);background:rgba(35,158,195,.18);box-shadow:0 0 18px rgba(84,231,255,.16);animation:latestPulse 2.6s ease-in-out infinite}@keyframes latestPulse{50%{box-shadow:0 0 27px rgba(84,231,255,.42)}}
+.peak-tag{display:inline-flex;align-items:center;color:#ffe4a3;border:1px solid rgba(255,199,107,.5);background:rgba(255,199,107,.1);padding:5px 8px;font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;white-space:nowrap}
 @media(max-width:620px){.milestone-tags{grid-column:1/-1;justify-self:start;margin:8px 0 0 103px}.milestone-tags .latest{display:inline-flex}.milestone.current{min-height:152px}}
 
 /* 情报卡统一对齐：固定摘要空间，全文仅在用户主动展开后显示。 */
