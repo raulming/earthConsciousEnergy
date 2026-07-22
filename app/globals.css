@@ -87,6 +87,10 @@ body{font-size:16px;letter-spacing:.012em}.brand{font-size:16px;font-weight:800}
 .progress-stats{grid-template-columns:repeat(3,1fr)}
 @media(max-width:620px){.progress-stats div:last-child{grid-column:span 2}}
 
+/* 当前节点始终以最新一条记录为准，并显示可见的更新标识。 */
+.milestone-tags{align-self:start;justify-self:end;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px}.milestone-tags .breakthrough-tag{align-self:auto;justify-self:auto}.milestone.current .latest{color:#bffaff;border-color:rgba(84,231,255,.72);background:rgba(35,158,195,.18);box-shadow:0 0 18px rgba(84,231,255,.16);animation:latestPulse 2.6s ease-in-out infinite}@keyframes latestPulse{50%{box-shadow:0 0 27px rgba(84,231,255,.42)}}
+@media(max-width:620px){.milestone-tags{grid-column:1/-1;justify-self:start;margin:8px 0 0 103px}.milestone-tags .latest{display:inline-flex}.milestone.current{min-height:152px}}
+
 /* 情报卡统一对齐：固定摘要空间，全文仅在用户主动展开后显示。 */
 .intel-card{min-height:326px;padding-bottom:61px}.card-top{height:22px}.meta{height:18px;min-width:0;margin:16px 0 14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta time,.meta span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.intel-card h3{height:56px;margin-bottom:12px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.raw-preview{height:78px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}.expand{height:28px;border-top:1px solid rgba(114,140,194,.18);padding-top:11px;color:#b7c8e7;font-size:12px;font-weight:800;letter-spacing:.03em}.expand span{font-size:15px;line-height:11px}.intel-card.expanded{padding-bottom:61px}.intel-card.expanded h3{height:auto;min-height:0;display:block}.intel-card.expanded .details{margin-top:4px}.intel-card.expanded .expand{position:absolute;bottom:18px}.original-label{display:flex;justify-content:space-between;gap:12px}.original-label span{float:none;white-space:nowrap}
 @media(max-width:620px){.intel-card{min-height:318px}.raw-preview{height:75px}.original-label{font-size:9px}.original-label span{font-size:8px}}
