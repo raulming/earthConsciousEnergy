@@ -1,5 +1,5 @@
 import { asc } from "drizzle-orm";
-import { getDb } from "../../../db";
+import { ensureSchema, getDb } from "../../../db";
 import { progressUpdates } from "../../../db/schema";
 import { isAdminRequest } from "../../admin-auth";
 
@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    await ensureSchema();
     const rows = await getDb().select().from(progressUpdates).orderBy(asc(progressUpdates.createdAt), asc(progressUpdates.id));
     return Response.json({ updates: rows.map((row) => ({ ...row, breakthrough: row.breakthrough ? "重大突破" : undefined, added: true })) });
   } catch {
@@ -17,6 +18,7 @@ export async function GET() {
 export async function POST(request: Request) {
   if (!await isAdminRequest(request)) return Response.json({ error: "需要管理员登录" }, { status: 401 });
   try {
+    await ensureSchema();
     const payload = await request.json() as { date?: string; energy?: number; note?: string; breakthrough?: boolean };
     const date = payload.date?.trim() ?? "";
     const energy = Number(payload.energy);

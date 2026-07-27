@@ -1,11 +1,12 @@
 import { eq } from "drizzle-orm";
-import { getDb } from "../../../../db";
+import { ensureSchema, getDb } from "../../../../db";
 import { progressUpdates } from "../../../../db/schema";
 import { isAdminRequest } from "../../../admin-auth";
 
 export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
   if (!await isAdminRequest(request)) return Response.json({ error: "需要管理员登录" }, { status: 401 });
   try {
+    await ensureSchema();
     const { id } = await context.params;
     await getDb().delete(progressUpdates).where(eq(progressUpdates.id, id));
     return Response.json({ ok: true });

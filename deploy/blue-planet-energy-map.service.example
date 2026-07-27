@@ -1,0 +1,32 @@
+[Unit]
+Description=Blue Planet Energy Map
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=blueplanet
+Group=blueplanet
+WorkingDirectory=/opt/blue-planet-energy-map/current
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=SELFHOST_DATA_DIR=/var/lib/blue-planet-energy-map
+Environment=HOME=/var/lib/blue-planet-energy-map
+Environment=WRANGLER_LOG_PATH=/var/lib/blue-planet-energy-map/wrangler.log
+EnvironmentFile=/etc/blue-planet-energy-map.env
+ExecStart=/usr/bin/node scripts/selfhost-start.mjs
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/blue-planet-energy-map
+LockPersonality=true
+RestrictSUIDSGID=true
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

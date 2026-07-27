@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 
 type Progress = {
   id?: string;
@@ -16,7 +17,7 @@ type Progress = {
 type AdminStatus = "loading" | "unconfigured" | "guest" | "admin";
 
 const milestones: Progress[] = [
-  { date: "公元0年—2000年", energy: 132, note: "蓝星意识能量早期记录" },
+  { date: "公元0年-2000年", energy: 132, note: "蓝星意识能量早期记录" },
   { date: "2007年", energy: 194 },
   { date: "2017年", energy: 222 },
   { date: "2023年", energy: 232 },
@@ -210,57 +211,69 @@ export default function Home() {
     setShowAdminPanel((current) => !current);
   };
 
-  return <main>
+  return <main id="top">
     <header className="topbar">
-      <a className="brand" href="#top"><OrbitMark /><span>蓝星能量星图</span></a>
-      <nav><a href="#milestones">进度星图</a><a href="#principles">核心准则</a></nav>
+      <a className="brand" href="#top" aria-label="返回蓝星能量星图首页"><OrbitMark /><span>蓝星能量星图</span></a>
+      <nav aria-label="主导航"><a href="#milestones">进度星图</a><a href="#principles">核心准则</a></nav>
       <div className="admin-actions">
         <span className={`access-chip ${adminStatus === "admin" ? "is-admin" : ""}`}>
           <i /> {adminStatus === "admin" ? "管理员在线" : "访客只读"}
         </span>
-        {adminStatus !== "loading" && <button className="admin-button" onClick={adminStatus === "admin" ? logoutAdmin : openAdminPanel}>
+        {adminStatus !== "loading" && <button type="button" className="admin-button" onClick={adminStatus === "admin" ? logoutAdmin : openAdminPanel}>
           {adminStatus === "admin" ? "退出" : adminStatus === "unconfigured" ? "设置管理员" : "管理员登录"}
         </button>}
       </div>
     </header>
 
-    <section className="hero" id="top">
-      <div className="stars stars-a" /><div className="stars stars-b" /><div className="planet planet-one" /><div className="planet planet-two" />
-      <div className="hero-copy"><p className="eyebrow">BLUE PLANET · ASCENSION TRACKER / 2026</p><h1>穿越群星<br /><em>共启新纪元</em></h1><p className="intro">记录蓝星意识能量的每一次跃迁。<br />以核心准则为坐标，见证共同前行的星际进程。</p><div className="hero-actions"><a className="primary-btn" href="#milestones">查看进度星图 <span>→</span></a><a className="text-btn" href="#principles">阅读核心准则 ↘</a></div></div>
-      <div className="energy-console"><div className="console-orbit"><span /><span /><span /><div className="energy-core"><small>当前意识能量</small><strong>{latestProgress.energy.toLocaleString()}</strong><b>LEVEL · {latestProgress.date}</b></div></div><div className="signal-row"><span><i /> 同频中</span><span>最新更新 <b>{latestProgress.date}</b></span></div></div>
+    <section className="hero" aria-labelledby="hero-title">
+      <div className="hero-media" aria-hidden="true">
+        <Image src="/blue-planet-orbit.webp" alt="" width={1586} height={992} priority unoptimized sizes="(max-width: 680px) 100vw, 82vw" />
+        <span className="orbital-path path-one" /><span className="orbital-path path-two" />
+      </div>
+      <div className="hero-copy">
+        <p className="eyebrow">BLUE PLANET / ENERGY MAP</p>
+        <h1 id="hero-title">穿越群星<br /><em>共启新纪元</em></h1>
+        <p className="intro">记录蓝星意识能量的每一次跃迁，以核心准则为坐标，见证共同前行。</p>
+        <div className="hero-actions"><a className="primary-btn" href="#milestones">查看进度 <span aria-hidden="true">→</span></a><a className="text-btn" href="#principles">核心准则</a></div>
+      </div>
+      <aside className="energy-readout" aria-label="当前意识能量">
+        <span className="readout-label">CURRENT ENERGY</span>
+        <strong>{latestProgress.energy.toLocaleString()}</strong>
+        <div><span>最新记录</span><time>{latestProgress.date}</time></div>
+      </aside>
     </section>
 
-    <section className="quick-stats progress-stats"><div><strong>{allProgress.length}</strong><span>重要里程碑</span></div><div><strong>{progressUpdates.length}</strong><span>新增进度记录</span></div><div><strong>{latestProgress.energy.toLocaleString()}</strong><span>最新能量</span></div></section>
+    <section className="quick-stats" aria-label="进度摘要"><div className="primary-stat"><strong>{latestProgress.energy.toLocaleString()}</strong><span>当前能量</span></div><div><strong>{allProgress.length}</strong><span>进度坐标</span></div><div><strong>{progressUpdates.length}</strong><span>云端新记录</span></div></section>
 
     <section className="section milestones" id="milestones">
       <div className="section-heading">
-        <div><p className="eyebrow">MILESTONE TRACKER</p><h2>蓝星意识能量·进度星图</h2><p>关键跃迁已使用重大里程碑标记；共享记录仅由管理员维护，访客可查看全部进程。</p></div>
+        <div><h2>意识能量进度星图</h2><p>重大突破以高亮坐标标记。共享记录由管理员维护，所有访客均可查看。</p></div>
         <div className="milestone-actions">
-          {adminStatus === "admin" && <button className="add-btn" onClick={() => setShowProgressInput(!showProgressInput)}><span>+</span> 记录最新进度</button>}
-          <button className="outline-btn" onClick={() => setShowAllTimeline(!showAllTimeline)}>{showAllTimeline ? "收起早期记录" : "展开全部记录"} <span>{showAllTimeline ? "↑" : "↓"}</span></button>
+          {adminStatus === "admin" && <button type="button" className="add-btn" onClick={() => setShowProgressInput(!showProgressInput)}>记录最新进度 <span aria-hidden="true">+</span></button>}
+          <button type="button" className="outline-btn" onClick={() => setShowAllTimeline(!showAllTimeline)}>{showAllTimeline ? "收起记录" : "查看全部"} <span aria-hidden="true">{showAllTimeline ? "↑" : "↓"}</span></button>
         </div>
       </div>
 
       {showAdminPanel && adminStatus !== "admin" && <aside className="admin-panel" aria-live="polite">
-        <div className="admin-panel-copy"><p className="eyebrow">ADMIN ACCESS</p><h3>{adminStatus === "unconfigured" ? "首次设置管理员密码" : "管理员登录"}</h3><p>{adminStatus === "unconfigured" ? "使用一次性设置码为默认账号创建密码。设置成功后，该设置码立即失效。" : "登录后可新增和删除共享进度记录；访客始终保持只读。"}</p></div>
+        <div className="admin-panel-copy"><span className="panel-label">管理员权限</span><h3>{adminStatus === "unconfigured" ? "首次设置管理员密码" : "管理员登录"}</h3><p>{adminStatus === "unconfigured" ? "使用一次性设置码为默认账号创建密码。设置成功后，该设置码立即失效。" : "登录后可新增和删除共享进度记录。访客始终保持只读。"}</p></div>
         <form className="auth-form" onSubmit={adminStatus === "unconfigured" ? setupAdmin : loginAdmin}>
           <label>管理员账号<input value="admin" readOnly aria-label="管理员账号" /></label>
           {adminStatus === "unconfigured" && <label>一次性设置码<input value={setupCode} onChange={(event) => setSetupCode(event.target.value)} autoComplete="one-time-code" placeholder="输入发布时提供的设置码" /></label>}
           <label>{adminStatus === "unconfigured" ? "设置密码" : "密码"}<input type="password" value={authPassword} onChange={(event) => setAuthPassword(event.target.value)} autoComplete={adminStatus === "unconfigured" ? "new-password" : "current-password"} placeholder={adminStatus === "unconfigured" ? "至少 12 位" : "输入管理员密码"} /></label>
           {adminStatus === "unconfigured" && <label>确认密码<input type="password" value={authPasswordAgain} onChange={(event) => setAuthPasswordAgain(event.target.value)} autoComplete="new-password" placeholder="再次输入密码" /></label>}
-          <div className="auth-submit"><button className="primary-btn" disabled={authBusy}>{authBusy ? "处理中…" : adminStatus === "unconfigured" ? "设置并登录 →" : "登录 →"}</button><button type="button" className="text-btn" onClick={() => setShowAdminPanel(false)}>取消</button></div>
+          <div className="auth-submit"><button className="primary-btn" disabled={authBusy}>{authBusy ? "处理中…" : adminStatus === "unconfigured" ? "设置并登录" : "登录"}</button><button type="button" className="text-btn" onClick={() => setShowAdminPanel(false)}>取消</button></div>
           {authError && <p className="auth-error" role="alert">{authError}</p>}
         </form>
       </aside>}
 
       {showProgressInput && adminStatus === "admin" && <div className="progress-dock">
-        <div className="input-dock-head"><div><p className="eyebrow">PROGRESS UPDATE</p><h3>添加最新意识能量记录</h3><p>保存后将同步到共享星图，并自动更新当前能量与最新记录标识。</p></div><button className="close-input" onClick={() => setShowProgressInput(false)} aria-label="关闭进度录入">×</button></div>
+        <div className="input-dock-head"><div><span className="panel-label">进度维护</span><h3>添加最新意识能量记录</h3><p>保存后将同步到共享星图，并自动更新当前能量与最新记录标识。</p></div><button type="button" className="close-input" onClick={() => setShowProgressInput(false)} aria-label="关闭进度录入">×</button></div>
         <form className="progress-form" onSubmit={addProgress}>
           <label>日期<input value={progressDate} onChange={(event) => setProgressDate(event.target.value)} placeholder="例如2026年7月20日" /></label>
           <label>意识能量<input value={progressEnergy} inputMode="numeric" onChange={(event) => setProgressEnergy(event.target.value)} placeholder="例如1245" /></label>
           <label className="progress-note">记录说明<input value={progressNote} onChange={(event) => setProgressNote(event.target.value)} placeholder="例如第四次线下行动" /></label>
           <label className="breakthrough-check"><input checked={progressBreakthrough} onChange={(event) => setProgressBreakthrough(event.target.checked)} type="checkbox" /> 作为重大突破标记</label>
-          <button className="primary-btn" disabled={savingProgress || !progressDate.trim() || !progressEnergy.trim()}>{savingProgress ? "保存中…" : <>保存进度 <span>→</span></>}</button>
+          <button className="primary-btn" disabled={savingProgress || !progressDate.trim() || !progressEnergy.trim()}>{savingProgress ? "保存中…" : "保存进度"}</button>
         </form>
       </div>}
 
@@ -272,14 +285,14 @@ export default function Home() {
           <div className="milestone-tags">
             {item.current && <span className="latest">最新记录</span>}
             {item.currentPeak && <span className="peak-tag">当前峰值</span>}
-            {item.breakthrough && <span className="breakthrough-tag"><b>✦</b>{item.breakthrough}</span>}
-            {adminStatus === "admin" && item.id && <button className="delete-progress" onClick={() => deleteProgress(item)} aria-label={`删除 ${item.date} 的进度记录`}>删除</button>}
+            {item.breakthrough && <span className="breakthrough-tag">重大突破 / {item.breakthrough}</span>}
+            {adminStatus === "admin" && item.id && <button type="button" className="delete-progress" onClick={() => deleteProgress(item)} aria-label={`删除 ${item.date} 的进度记录`}>删除</button>}
           </div>
         </article>)}
       </div>
     </section>
 
-    <section className="principles" id="principles"><div className="principles-inner"><div><p className="eyebrow">CORE PROTOCOL</p><h2>星际游戏意识引领的<br />五个核心准则</h2><p>以信仰、真理、价值、扬升与标准为坐标，引导个人与整体向更美好的方向前行。</p></div><div className="protocols"><span>01 <b>世界大同，万物共荣的信仰。</b></span><span>02 <b>一标准终极真理的评判标准。</b></span><span>03 <b>公平正义，美好和谐的人生价值追求。</b></span><span>04 <b>个人扬升对蓝星升维的重要性。</b></span><span>05 <b>分别心与二元对立四项标准的运用。</b></span></div></div></section>
-    <footer><a className="brand" href="#top"><OrbitMark /><span>蓝星能量星图</span></a><p>蓝星意识能量·星际进程记录</p><a href="#top">返回舰桥 ↑</a></footer>
+    <section className="principles" id="principles"><div className="principles-inner"><div className="principles-copy"><h2>星际游戏意识引领的五个核心准则</h2><p>以信仰、真理、价值、扬升与标准为坐标，引导个人与整体向更美好的方向前行。</p></div><ol className="protocols"><li><span>01</span><b>世界大同，万物共荣的信仰。</b></li><li><span>02</span><b>一标准终极真理的评判标准。</b></li><li><span>03</span><b>公平正义，美好和谐的人生价值追求。</b></li><li><span>04</span><b>个人扬升对蓝星升维的重要性。</b></li><li><span>05</span><b>分别心与二元对立四项标准的运用。</b></li></ol></div></section>
+    <footer><a className="brand" href="#top"><OrbitMark /><span>蓝星能量星图</span></a><p>蓝星意识能量进程记录</p><a href="#top">返回顶部 ↑</a></footer>
   </main>;
 }

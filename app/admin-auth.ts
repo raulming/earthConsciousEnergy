@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { eq } from "drizzle-orm";
-import { getDb } from "../db";
+import { ensureSchema, getDb } from "../db";
 import { adminCredentials } from "../db/schema";
 
 export const ADMIN_USERNAME = "admin";
@@ -47,6 +47,7 @@ export async function verifyPassword(password: string, salt: string, expectedHas
 }
 
 export async function isAdminConfigured() {
+  await ensureSchema();
   const rows = await getDb().select({ username: adminCredentials.username }).from(adminCredentials).where(eq(adminCredentials.username, ADMIN_USERNAME)).limit(1);
   return rows.length === 1;
 }
@@ -59,7 +60,17 @@ export async function verifySetupToken(candidate: string) {
 export function isSameOriginRequest(request: Request) {
   const origin = request.headers.get("origin");
   if (!origin) return true;
-  try { return new URL(origin).origin === new URL(request.url).origin; } catch { return false; }
+  try {
+    const requestUrl = new URL(request.url);
+    const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+    const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
+    const publicOrigin = forwardedHost
+      ? new URL(`${forwardedProto || requestUrl.protocol.replace(":", "")}://${forwardedHost}`).origin
+      : requestUrl.origin;
+    return new URL(origin).origin === publicOrigin;
+  } catch {
+    return false;
+  }
 }
 
 export async function createSessionCookie() {

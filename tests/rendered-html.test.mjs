@@ -8,8 +8,8 @@ const source = (path) => readFile(projectFile(path), "utf8");
 test("keeps visitors read-only and exposes maintenance controls only to admins", async () => {
   const page = await source("app/page.tsx");
 
-  assert.match(page, /adminStatus === "admin" && <button className="add-btn"/);
-  assert.match(page, /adminStatus === "admin" && item\.id && <button className="delete-progress"/);
+  assert.match(page, /adminStatus === "admin" && <button[^>]+className="add-btn"/);
+  assert.match(page, /adminStatus === "admin" && item\.id && <button[^>]+className="delete-progress"/);
   assert.match(page, /访客只读/);
   assert.match(page, /管理员登录/);
   assert.match(page, /首次设置管理员密码/);
