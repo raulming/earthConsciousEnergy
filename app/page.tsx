@@ -391,6 +391,10 @@ export default function Home() {
     <section className="quick-stats" aria-label="进度摘要"><div className="primary-stat"><strong>{latestProgress.energy.toLocaleString()}</strong><span>当前能量</span></div><div><strong>{allProgress.length}</strong><span>进度坐标</span></div><div><strong>{progressUpdates.length}</strong><span>云端新记录</span></div></section>
 
     <section className="section milestones" id="milestones">
+      <div className="section-scene milestone-scene" aria-hidden="true">
+        <Image src="/earth-orbit-day.webp" alt="" fill unoptimized sizes="100vw" />
+        <span className="scene-radiance" /><span className="scene-scan" />
+      </div>
       <div className="section-heading">
         <div><h2>意识能量进度星图</h2><p>重大突破以高亮坐标标记。共享记录由管理员维护，所有访客均可查看。</p></div>
         <div className="milestone-actions">
@@ -449,6 +453,10 @@ export default function Home() {
     </section>
 
     <section className="principles" id="principles">
+      <div className="section-scene principles-scene" aria-hidden="true">
+        <Image src="/earth-orbit-night.webp" alt="" fill unoptimized sizes="100vw" />
+        <span className="scene-radiance" /><span className="scene-scan" />
+      </div>
       <div className="principles-inner">
         <div className="principles-copy">
           <span className="principles-signal">CORE PRINCIPLES</span>

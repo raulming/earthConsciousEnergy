@@ -43,6 +43,21 @@ test("focuses major breakthroughs and presents every principle as a memorable fo
   assert.match(styles, /@keyframes principleStatementIn/);
 });
 
+test("uses both supplied earth images as animated responsive section scenes", async () => {
+  const [page, styles] = await Promise.all([
+    source("app/page.tsx"),
+    source("app/globals.css"),
+  ]);
+
+  assert.match(page, /src="\/earth-orbit-day\.webp"/);
+  assert.match(page, /src="\/earth-orbit-night\.webp"/);
+  assert.match(page, /className="section-scene milestone-scene"/);
+  assert.match(page, /className="section-scene principles-scene"/);
+  assert.match(styles, /@keyframes cosmicImageDrift/);
+  assert.match(styles, /\.principles-scene > img/);
+  assert.match(styles, /prefers-reduced-motion: reduce/);
+});
+
 test("keeps visitors read-only and exposes maintenance controls only to admins", async () => {
   const page = await source("app/page.tsx");
 
