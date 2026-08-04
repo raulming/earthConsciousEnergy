@@ -16,6 +16,13 @@ type Progress = {
 
 type AdminStatus = "loading" | "unconfigured" | "guest" | "admin";
 
+type FocusSequenceProps = {
+  items: string[];
+  activeIndex: number;
+  onActiveChange: (index: number) => void;
+  ariaLabel: string;
+};
+
 const milestones: Progress[] = [
   { date: "公元0年-2000年", energy: 132, note: "蓝星意识能量早期记录" },
   { date: "2007年", energy: 194 },
@@ -40,6 +47,14 @@ const milestones: Progress[] = [
   { date: "2026年7月9日", energy: 1200, note: "个体能级突破 1200", breakthrough: "突破 1200" },
   { date: "2026年7月13日", energy: 1224, note: "第 3 次线下行动", breakthrough: "线下行动 III" },
   { date: "2026年7月17日", energy: 1230, note: "阶段记录" },
+];
+
+const principles = [
+  { label: "信仰", text: "世界大同，万物共荣的信仰。" },
+  { label: "真理", text: "一标准终极真理的评判标准。" },
+  { label: "价值", text: "公平正义，美好和谐的人生价值追求。" },
+  { label: "扬升", text: "个人扬升对蓝星升维的重要性。" },
+  { label: "标准", text: "分别心与二元对立四项标准的运用。" },
 ];
 
 function OrbitMark() {
@@ -111,6 +126,60 @@ function Starfield() {
   return <canvas ref={canvasRef} className="starfield" aria-hidden="true" />;
 }
 
+function FocusSequence({ items, activeIndex, onActiveChange, ariaLabel }: FocusSequenceProps) {
+  // Interaction pattern adapted from React Bits TrueFocus. See THIRD_PARTY_NOTICES.md.
+  const containerRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [focusRect, setFocusRect] = useState({ x: 0, y: 0, width: 0, height: 0 });
+
+  useEffect(() => {
+    if (items.length < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const interval = window.setInterval(() => onActiveChange((activeIndex + 1) % items.length), 2800);
+    return () => window.clearInterval(interval);
+  }, [activeIndex, items.length, onActiveChange]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const activeItem = itemRefs.current[activeIndex];
+    if (!container || !activeItem) return;
+
+    const updateFrame = () => {
+      const parentRect = container.getBoundingClientRect();
+      const activeRect = activeItem.getBoundingClientRect();
+      setFocusRect({
+        x: activeRect.left - parentRect.left,
+        y: activeRect.top - parentRect.top,
+        width: activeRect.width,
+        height: activeRect.height,
+      });
+    };
+
+    const observer = new ResizeObserver(updateFrame);
+    observer.observe(container);
+    observer.observe(activeItem);
+    updateFrame();
+    return () => observer.disconnect();
+  }, [activeIndex, items.length]);
+
+  if (!items.length) return null;
+
+  return <div className="focus-sequence" ref={containerRef} role="group" aria-label={ariaLabel}>
+    {items.map((item, index) => <button
+      key={`${item}-${index}`}
+      ref={(element) => { itemRefs.current[index] = element; }}
+      type="button"
+      className={`focus-word ${index === activeIndex ? "is-active" : ""}`}
+      aria-pressed={index === activeIndex}
+      onMouseEnter={() => onActiveChange(index)}
+      onFocus={() => onActiveChange(index)}
+      onClick={() => onActiveChange(index)}
+    >{item}</button>)}
+    <span className="focus-frame" aria-hidden="true" style={{ transform: `translate3d(${focusRect.x}px, ${focusRect.y}px, 0)`, width: focusRect.width, height: focusRect.height }}>
+      <i className="corner top-left" /><i className="corner top-right" /><i className="corner bottom-left" /><i className="corner bottom-right" />
+    </span>
+  </div>;
+}
+
 async function readError(response: Response, fallback: string) {
   try {
     const payload = await response.json() as { error?: string };
@@ -138,6 +207,8 @@ export default function Home() {
   const [authError, setAuthError] = useState("");
   const [authBusy, setAuthBusy] = useState(false);
   const [savingProgress, setSavingProgress] = useState(false);
+  const [focusedBreakthrough, setFocusedBreakthrough] = useState(0);
+  const [activePrinciple, setActivePrinciple] = useState(0);
 
   useEffect(() => {
     localStorage.removeItem("blue-planet-incremental-intel");
@@ -173,6 +244,9 @@ export default function Home() {
 
   const latestProgress = allProgress[allProgress.length - 1];
   const timeline = showAllTimeline ? allProgress : allProgress.slice(-9);
+  const breakthroughProgress = timeline.filter((item) => item.breakthrough);
+  const focusedBreakthroughIndex = breakthroughProgress.length ? focusedBreakthrough % breakthroughProgress.length : 0;
+  const activeBreakthrough = breakthroughProgress[focusedBreakthroughIndex];
 
   async function setupAdmin(event: FormEvent) {
     event.preventDefault();
@@ -349,9 +423,20 @@ export default function Home() {
       </div>}
 
       {(progressLoading || progressError) && <p className={`progress-state ${progressError ? "is-error" : ""}`} role="status">{progressError || "正在同步共享进度…"}</p>}
+      <section className="breakthrough-console" aria-labelledby="breakthrough-focus-title">
+        <div className="breakthrough-console-copy">
+          <span>BREAKTHROUGH FOCUS</span>
+          <h3 id="breakthrough-focus-title">重大突破焦点</h3>
+          <p>让关键跃迁从连续记录中清晰浮现。</p>
+        </div>
+        <div className="breakthrough-focus-stage">
+          <FocusSequence items={breakthroughProgress.map((item) => item.breakthrough || item.date)} activeIndex={focusedBreakthroughIndex} onActiveChange={setFocusedBreakthrough} ariaLabel="选择重大突破" />
+          {activeBreakthrough && <p className="focused-coordinate" aria-live="polite"><time>{activeBreakthrough.date}</time><strong>{activeBreakthrough.energy.toLocaleString()}</strong><span>{activeBreakthrough.note || "意识能量完成关键跃迁"}</span></p>}
+        </div>
+      </section>
       <div className="timeline-wrap" aria-live="polite">
         <div className="timeline-line" />
-        {timeline.map((item) => <article className={`milestone ${item.current ? "current" : ""} ${item.breakthrough ? "breakthrough" : ""}`} key={item.id ?? `${item.date}-${item.energy}`}>
+        {timeline.map((item) => <article className={`milestone ${item.current ? "current" : ""} ${item.breakthrough ? "breakthrough" : ""} ${activeBreakthrough && item.date === activeBreakthrough.date && item.energy === activeBreakthrough.energy ? "is-focus-active" : ""}`} key={item.id ?? `${item.date}-${item.energy}`}>
           <div className="timeline-dot"><i /></div><time>{item.date}</time><strong>{item.energy.toLocaleString()}</strong><p>{item.note || "意识能量持续稳定提升"}</p>
           <div className="milestone-tags">
             {item.current && <span className="latest">最新记录</span>}
@@ -363,7 +448,24 @@ export default function Home() {
       </div>
     </section>
 
-    <section className="principles" id="principles"><div className="principles-inner"><div className="principles-copy"><h2>星际游戏意识引领的五个核心准则</h2><p>以信仰、真理、价值、扬升与标准为坐标，引导个人与整体向更美好的方向前行。</p></div><ol className="protocols"><li><span>01</span><b>世界大同，万物共荣的信仰。</b></li><li><span>02</span><b>一标准终极真理的评判标准。</b></li><li><span>03</span><b>公平正义，美好和谐的人生价值追求。</b></li><li><span>04</span><b>个人扬升对蓝星升维的重要性。</b></li><li><span>05</span><b>分别心与二元对立四项标准的运用。</b></li></ol></div></section>
+    <section className="principles" id="principles">
+      <div className="principles-inner">
+        <div className="principles-copy">
+          <span className="principles-signal">CORE PRINCIPLES</span>
+          <h2><span>星际游戏意识引领的</span><strong>五个核心准则</strong></h2>
+          <p>以信仰、真理、价值、扬升与标准为坐标，引导个人与整体向更美好的方向前行。</p>
+        </div>
+        <div className="principle-memory">
+          <p className="memory-title">核心准则，铭记于心</p>
+          <article className="principle-statement" key={activePrinciple} aria-live="polite">
+            <span>{String(activePrinciple + 1).padStart(2, "0")}</span>
+            <b>{principles[activePrinciple].text}</b>
+          </article>
+          <FocusSequence items={principles.map((item) => item.label)} activeIndex={activePrinciple} onActiveChange={setActivePrinciple} ariaLabel="选择核心准则" />
+        </div>
+        <ol className="protocols">{principles.map((principle, index) => <li className={index === activePrinciple ? "is-active" : ""} key={principle.label}><span>{String(index + 1).padStart(2, "0")}</span><b>{principle.text}</b></li>)}</ol>
+      </div>
+    </section>
     <footer><a className="brand" href="#top"><OrbitMark /><span>蓝星能量星图</span></a><p>蓝星意识能量进程记录</p><a href="#top">返回顶部 ↑</a></footer>
   </main>;
 }

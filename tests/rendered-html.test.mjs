@@ -25,6 +25,24 @@ test("recreates the energy map reference as a responsive animated interface", as
   assert.match(styles, /prefers-reduced-motion: reduce/);
 });
 
+test("focuses major breakthroughs and presents every principle as a memorable focal sequence", async () => {
+  const [page, styles] = await Promise.all([
+    source("app/page.tsx"),
+    source("app/globals.css"),
+  ]);
+
+  assert.match(page, /function FocusSequence/);
+  assert.match(page, /BREAKTHROUGH FOCUS/);
+  assert.match(page, /核心准则，铭记于心/);
+  assert.match(page, /世界大同，万物共荣的信仰。/);
+  assert.match(page, /分别心与二元对立四项标准的运用。/);
+  assert.match(page, /onFocus=\{\(\) => onActiveChange\(index\)\}/);
+  assert.match(styles, /\.focus-frame/);
+  assert.match(styles, /\.milestone\.breakthrough\.is-focus-active/);
+  assert.match(styles, /\.principle-statement/);
+  assert.match(styles, /@keyframes principleStatementIn/);
+});
+
 test("keeps visitors read-only and exposes maintenance controls only to admins", async () => {
   const page = await source("app/page.tsx");
 
