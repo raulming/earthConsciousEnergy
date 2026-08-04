@@ -5,6 +5,19 @@ import test from "node:test";
 const projectFile = (path) => new URL(`../${path}`, import.meta.url);
 const source = (path) => readFile(projectFile(path), "utf8");
 
+test("uses the supplied energy map as a responsive animated hero", async () => {
+  const [page, styles] = await Promise.all([
+    source("app/page.tsx"),
+    source("app/globals.css"),
+  ]);
+
+  assert.match(page, /src="\/blue-planet-energy-map\.webp"/);
+  assert.match(page, /<strong>穿越群星<\/strong><em>共启新纪元<\/em>/);
+  assert.match(page, /记录蓝星意识能量的每一次跃迁，以核心准则为坐标，见证共同前行。/);
+  assert.match(styles, /@media \(max-width: 680px\)/);
+  assert.match(styles, /prefers-reduced-motion: reduce/);
+});
+
 test("keeps visitors read-only and exposes maintenance controls only to admins", async () => {
   const page = await source("app/page.tsx");
 

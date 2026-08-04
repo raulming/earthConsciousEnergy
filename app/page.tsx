@@ -227,12 +227,13 @@ export default function Home() {
 
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-media" aria-hidden="true">
-        <Image src="/blue-planet-orbit.webp" alt="" width={1586} height={992} priority unoptimized sizes="(max-width: 680px) 100vw, 82vw" />
+        <Image src="/blue-planet-energy-map.webp" alt="" width={1731} height={909} priority unoptimized sizes="100vw" />
+        <span className="hero-particles particles-one" /><span className="hero-particles particles-two" />
         <span className="orbital-path path-one" /><span className="orbital-path path-two" />
+        <span className="energy-wave wave-one" /><span className="energy-wave wave-two" />
       </div>
       <div className="hero-copy">
-        <p className="eyebrow">BLUE PLANET / ENERGY MAP</p>
-        <h1 id="hero-title">穿越群星<br /><em>共启新纪元</em></h1>
+        <h1 id="hero-title"><strong>穿越群星</strong><em>共启新纪元</em></h1>
         <p className="intro">记录蓝星意识能量的每一次跃迁，以核心准则为坐标，见证共同前行。</p>
         <div className="hero-actions"><a className="primary-btn" href="#milestones">查看进度 <span aria-hidden="true">→</span></a><a className="text-btn" href="#principles">核心准则</a></div>
       </div>
