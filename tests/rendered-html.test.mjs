@@ -12,15 +12,16 @@ test("recreates the energy map reference as a responsive animated interface", as
   ]);
 
   assert.match(page, /function Starfield\(\)/);
-  assert.match(page, /className="energy-core"/);
-  assert.match(page, /className="orbit-plane orbit-plane-one"/);
+  assert.match(page, /src="\/blue-planet-energy-map\.webp"/);
+  assert.match(page, /className="live-energy"/);
+  assert.match(page, /className="orbit-trace trace-one"/);
+  assert.match(page, /className="vertical-energy-beam"/);
   assert.match(page, /<p className="hero-slogan"><strong>穿越群星<\/strong><em>共启新纪元<\/em><\/p>/);
   assert.match(page, /记录蓝星意识能量的每一次跃迁，以核心准则为坐标，见证共同前行。/);
   assert.match(page, /cancelAnimationFrame\(frame\)/);
-  assert.doesNotMatch(page, /blue-planet-energy-map\.webp/);
-  assert.match(styles, /@keyframes coreBreathe/);
+  assert.match(styles, /@keyframes radiancePulse/);
   assert.match(styles, /@keyframes satelliteTravel/);
-  assert.match(styles, /@media \(max-width: 680px\)/);
+  assert.match(styles, /@media \(max-width: 767px\)/);
   assert.match(styles, /prefers-reduced-motion: reduce/);
 });
 

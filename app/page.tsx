@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 
 type Progress = {
   id?: string;
@@ -290,35 +291,26 @@ export default function Home() {
     </header>
 
     <section className="hero" aria-labelledby="hero-title">
-      <Starfield />
-      <div className="space-scene" aria-hidden="true">
-        <span className="deep-planet"><i /></span>
-        <span className="nebula nebula-one" /><span className="nebula nebula-two" />
-        <span className="signal-line signal-one" /><span className="signal-line signal-two" />
+      <div className="reference-art" aria-hidden="true">
+        <Image src="/blue-planet-energy-map.webp" alt="" width={1731} height={909} priority unoptimized sizes="100vw" />
+        <Starfield />
+        <span className="art-vignette" />
+        <span className="sphere-radiance" /><span className="sphere-radiance radiance-two" />
+        <span className="vertical-energy-beam" />
+        <span className="orbit-trace trace-one"><i /></span>
+        <span className="orbit-trace trace-two"><i /></span>
+        <span className="orbit-trace trace-three"><i /></span>
+        <span className="platform-wave platform-wave-one" /><span className="platform-wave platform-wave-two" />
       </div>
-      <div className="hero-layout">
-        <div className="hero-copy">
-          <p className="system-name">意识能量进度星图</p>
-          <h1 id="hero-title"><span>蓝星能量</span><strong>星图</strong></h1>
-          <p className="english-lockup">BLUE PLANET <i /> ENERGY MAP</p>
-          <p className="hero-slogan"><strong>穿越群星</strong><em>共启新纪元</em></p>
-          <p className="intro">记录蓝星意识能量的每一次跃迁，以核心准则为坐标，见证共同前行。</p>
-          <div className="hero-actions"><a className="primary-btn" href="#milestones">查看进度 <span aria-hidden="true">→</span></a><a className="text-btn" href="#principles">核心准则</a></div>
-        </div>
-
-        <div className="holo-stage" role="group" aria-label={`当前意识能量 ${latestProgress.energy.toLocaleString()}，最新记录 ${latestProgress.date}`}>
-          <div className="scan-beam" aria-hidden="true" />
-          <div className="orbit-plane orbit-plane-one" aria-hidden="true"><span className="orbit-runner"><i /></span></div>
-          <div className="orbit-plane orbit-plane-two" aria-hidden="true"><span className="orbit-runner"><i /></span></div>
-          <div className="orbit-plane orbit-plane-three" aria-hidden="true"><span className="orbit-runner"><i /></span></div>
-          <div className="energy-shell" aria-hidden="true"><span /><span /><span /></div>
-          <div className="energy-core">
-            <span className="core-caption">CURRENT ENERGY</span>
-            <strong>{latestProgress.energy.toLocaleString()}</strong>
-            <span className="core-date">{latestProgress.date}</span>
-          </div>
-          <div className="holo-platform" aria-hidden="true"><span /><span /><span /></div>
-        </div>
+      <h1 id="hero-title" className="sr-only">蓝星能量星图</h1>
+      <div className="mobile-title" aria-hidden="true"><span>蓝星能量</span><strong>星图</strong><small>意识能量进度星图</small></div>
+      <div className="live-energy" role="group" aria-label={`当前意识能量 ${latestProgress.energy.toLocaleString()}，最新记录 ${latestProgress.date}`}>
+        <strong>{latestProgress.energy.toLocaleString()}</strong>
+      </div>
+      <div className="hero-message">
+        <p className="hero-slogan"><strong>穿越群星</strong><em>共启新纪元</em></p>
+        <p className="intro">记录蓝星意识能量的每一次跃迁，以核心准则为坐标，见证共同前行。</p>
+        <div className="hero-actions"><a className="primary-btn" href="#milestones">查看进度 <span aria-hidden="true">→</span></a><a className="text-btn" href="#principles">核心准则</a></div>
       </div>
     </section>
 
