@@ -1,7 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 type Progress = {
   id?: string;
@@ -44,6 +43,71 @@ const milestones: Progress[] = [
 
 function OrbitMark() {
   return <span className="orbit-mark" aria-hidden="true"><i /><b /></span>;
+}
+
+function Starfield() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    let width = 0;
+    let height = 0;
+    let frame = 0;
+    let stars: Array<{ x: number; y: number; radius: number; alpha: number; speed: number; phase: number }> = [];
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const resize = () => {
+      const bounds = canvas.getBoundingClientRect();
+      const scale = Math.min(window.devicePixelRatio || 1, 1.5);
+      width = bounds.width;
+      height = bounds.height;
+      canvas.width = Math.max(1, Math.floor(width * scale));
+      canvas.height = Math.max(1, Math.floor(height * scale));
+      context.setTransform(scale, 0, 0, scale, 0, 0);
+      const count = Math.max(76, Math.floor((width * height) / 9000));
+      stars = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 1.25 + .25,
+        alpha: Math.random() * .68 + .2,
+        speed: Math.random() * .012 + .004,
+        phase: Math.random() * Math.PI * 2,
+      }));
+    };
+
+    const draw = (time = 0) => {
+      context.clearRect(0, 0, width, height);
+      for (const star of stars) {
+        const drift = reduceMotion ? 0 : (time * star.speed) % Math.max(height, 1);
+        const y = (star.y + drift) % Math.max(height, 1);
+        const twinkle = reduceMotion ? star.alpha : star.alpha * (.72 + Math.sin(time * .0016 + star.phase) * .28);
+        context.beginPath();
+        context.fillStyle = `rgba(182, 226, 255, ${Math.max(.08, twinkle)})`;
+        context.arc(star.x, y, star.radius, 0, Math.PI * 2);
+        context.fill();
+      }
+      if (!reduceMotion) frame = requestAnimationFrame(draw);
+    };
+
+    const observer = new ResizeObserver(() => {
+      resize();
+      if (reduceMotion) draw();
+    });
+    observer.observe(canvas);
+    resize();
+    draw();
+
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="starfield" aria-hidden="true" />;
 }
 
 async function readError(response: Response, fallback: string) {
@@ -226,22 +290,36 @@ export default function Home() {
     </header>
 
     <section className="hero" aria-labelledby="hero-title">
-      <div className="hero-media" aria-hidden="true">
-        <Image src="/blue-planet-energy-map.webp" alt="" width={1731} height={909} priority unoptimized sizes="100vw" />
-        <span className="hero-particles particles-one" /><span className="hero-particles particles-two" />
-        <span className="orbital-path path-one" /><span className="orbital-path path-two" />
-        <span className="energy-wave wave-one" /><span className="energy-wave wave-two" />
+      <Starfield />
+      <div className="space-scene" aria-hidden="true">
+        <span className="deep-planet"><i /></span>
+        <span className="nebula nebula-one" /><span className="nebula nebula-two" />
+        <span className="signal-line signal-one" /><span className="signal-line signal-two" />
       </div>
-      <div className="hero-copy">
-        <h1 id="hero-title"><strong>穿越群星</strong><em>共启新纪元</em></h1>
-        <p className="intro">记录蓝星意识能量的每一次跃迁，以核心准则为坐标，见证共同前行。</p>
-        <div className="hero-actions"><a className="primary-btn" href="#milestones">查看进度 <span aria-hidden="true">→</span></a><a className="text-btn" href="#principles">核心准则</a></div>
+      <div className="hero-layout">
+        <div className="hero-copy">
+          <p className="system-name">意识能量进度星图</p>
+          <h1 id="hero-title"><span>蓝星能量</span><strong>星图</strong></h1>
+          <p className="english-lockup">BLUE PLANET <i /> ENERGY MAP</p>
+          <p className="hero-slogan"><strong>穿越群星</strong><em>共启新纪元</em></p>
+          <p className="intro">记录蓝星意识能量的每一次跃迁，以核心准则为坐标，见证共同前行。</p>
+          <div className="hero-actions"><a className="primary-btn" href="#milestones">查看进度 <span aria-hidden="true">→</span></a><a className="text-btn" href="#principles">核心准则</a></div>
+        </div>
+
+        <div className="holo-stage" role="group" aria-label={`当前意识能量 ${latestProgress.energy.toLocaleString()}，最新记录 ${latestProgress.date}`}>
+          <div className="scan-beam" aria-hidden="true" />
+          <div className="orbit-plane orbit-plane-one" aria-hidden="true"><span className="orbit-runner"><i /></span></div>
+          <div className="orbit-plane orbit-plane-two" aria-hidden="true"><span className="orbit-runner"><i /></span></div>
+          <div className="orbit-plane orbit-plane-three" aria-hidden="true"><span className="orbit-runner"><i /></span></div>
+          <div className="energy-shell" aria-hidden="true"><span /><span /><span /></div>
+          <div className="energy-core">
+            <span className="core-caption">CURRENT ENERGY</span>
+            <strong>{latestProgress.energy.toLocaleString()}</strong>
+            <span className="core-date">{latestProgress.date}</span>
+          </div>
+          <div className="holo-platform" aria-hidden="true"><span /><span /><span /></div>
+        </div>
       </div>
-      <aside className="energy-readout" aria-label="当前意识能量">
-        <span className="readout-label">CURRENT ENERGY</span>
-        <strong>{latestProgress.energy.toLocaleString()}</strong>
-        <div><span>最新记录</span><time>{latestProgress.date}</time></div>
-      </aside>
     </section>
 
     <section className="quick-stats" aria-label="进度摘要"><div className="primary-stat"><strong>{latestProgress.energy.toLocaleString()}</strong><span>当前能量</span></div><div><strong>{allProgress.length}</strong><span>进度坐标</span></div><div><strong>{progressUpdates.length}</strong><span>云端新记录</span></div></section>
