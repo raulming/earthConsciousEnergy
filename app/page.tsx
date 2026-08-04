@@ -388,8 +388,6 @@ export default function Home() {
       </div>
     </section>
 
-    <section className="quick-stats" aria-label="进度摘要"><div className="primary-stat"><strong>{latestProgress.energy.toLocaleString()}</strong><span>当前能量</span></div><div><strong>{allProgress.length}</strong><span>进度坐标</span></div><div><strong>{progressUpdates.length}</strong><span>云端新记录</span></div></section>
-
     <section className="section milestones" id="milestones">
       <div className="section-scene milestone-scene" aria-hidden="true">
         <Image src="/earth-orbit-day.webp" alt="" fill unoptimized sizes="100vw" />
@@ -402,6 +400,8 @@ export default function Home() {
           <button type="button" className="outline-btn" onClick={() => setShowAllTimeline(!showAllTimeline)}>{showAllTimeline ? "收起记录" : "查看全部"} <span aria-hidden="true">{showAllTimeline ? "↑" : "↓"}</span></button>
         </div>
       </div>
+
+      <section className="quick-stats" aria-label="进度摘要"><div className="primary-stat"><strong>{latestProgress.energy.toLocaleString()}</strong><span>当前能量</span></div><div><strong>{allProgress.length}</strong><span>进度坐标</span></div><div><strong>{progressUpdates.length}</strong><span>云端新记录</span></div></section>
 
       {showAdminPanel && adminStatus !== "admin" && <aside className="admin-panel" aria-live="polite">
         <div className="admin-panel-copy"><span className="panel-label">管理员权限</span><h3>{adminStatus === "unconfigured" ? "首次设置管理员密码" : "管理员登录"}</h3><p>{adminStatus === "unconfigured" ? "使用一次性设置码为默认账号创建密码。设置成功后，该设置码立即失效。" : "登录后可新增和删除共享进度记录。访客始终保持只读。"}</p></div>

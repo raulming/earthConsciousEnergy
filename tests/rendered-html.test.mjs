@@ -58,6 +58,19 @@ test("uses both supplied earth images as animated responsive section scenes", as
   assert.match(styles, /prefers-reduced-motion: reduce/);
 });
 
+test("places the progress summary inside the milestones section without a floating card", async () => {
+  const [page, styles] = await Promise.all([
+    source("app/page.tsx"),
+    source("app/globals.css"),
+  ]);
+
+  assert.ok(page.indexOf('className="quick-stats"') > page.indexOf('id="milestones"'));
+  assert.match(styles, /\.quick-stats \{[^}]*width: 100%/);
+  assert.match(styles, /\.quick-stats \{[^}]*border-top:/);
+  assert.doesNotMatch(styles, /\.quick-stats \{[^}]*margin: -24px/);
+  assert.doesNotMatch(styles, /\.quick-stats \{[^}]*box-shadow:/);
+});
+
 test("keeps visitors read-only and exposes maintenance controls only to admins", async () => {
   const page = await source("app/page.tsx");
 
